@@ -1,7 +1,5 @@
-def readFile (t)
-	print "Please enter the file name: "
-	fn = gets.chomp
-	file = File.new(fn, "r")
+def readFile (fileName, t)
+	file = File.new(fileName, "r")
 
 	i = 0
 	j = 0
@@ -230,23 +228,30 @@ end
 # create a 9x9 array as the sudoku model
 table = Array.new(9){Array.new(9)}
 
-# open the file and read in all the numbers or empty cells
-if !readFile(table)
-	puts "The input format is not valid."
-	puts
+# get user input
+print "Please enter the file name: "
+fn = gets.chomp
+if !File.exist?(fn)
+	puts "The file \"#{fn}\" does not exist."
 else
-	puts
-	# print the input sudoku
-	puts "Your input:\n\n"
-	printTable(table)
-	puts
-	# solve sudoku
-	if (solveSudoku(table, 0, 0)) 
-		puts "Solution:\n\n"
-		printTable(table)
+	# open the file and read in all the numbers or empty cells
+	if !readFile(fn, table)
+		puts "The input format is not valid."
 		puts
 	else
-		puts "There is no solution for this Sudoku.\n\n"
+		puts
+		# print the input sudoku
+		puts "Your input:\n\n"
+		printTable(table)
+		puts
+		# solve sudoku
+		if (solveSudoku(table, 0, 0)) 
+			puts "Solution:\n\n"
+			printTable(table)
+			puts
+		else
+			puts "There is no solution for this Sudoku.\n\n"
+		end
 	end
 end
 
