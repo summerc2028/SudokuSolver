@@ -5,20 +5,49 @@ def readFile (t)
 
 	i = 0
 	j = 0
-	count = 0
+	rowCount = 1
+	columnCount = 0
 	while (c = file.getc)
-		if (c =~ /[[:digit:]\.]/)
-			if (c != '.')
-				t[i][j] = c.to_i
+		columnCount += 1
+		if (columnCount > 12)
+			columnCount = 1
+			rowCount += 1
+		end
+		if (((rowCount == 11) && (columnCount == 12)) || (rowCount > 11))
+			if !(c =~ /\s/)
+				return false
 			end
-			j += 1
-			if (j == 9)
-				j = 0
-				i += 1
+			next
+		end
+		if (columnCount == 12)
+			if (c != "\n")
+				return false
+			end
+		elsif ((rowCount == 4) || (rowCount == 8))
+			if (c != '-')
+				return false
+			end
+		elsif ((columnCount == 4) || (columnCount == 8))
+			if (c != '|')
+				return false
+			end
+		else
+			if (c =~ /[[:digit:]\.]/)
+				if (c != '.')
+					t[i][j] = c.to_i
+				end
+				j += 1
+				if (j == 9)
+					j = 0
+					i += 1
+				end
+			else
+				return false
 			end
 		end
 	end
 	file.close
+	true
 end
 
 def printTable (t)
@@ -171,12 +200,13 @@ def violateBoxConstraint (t, i, j, value)
 	violate
 end
 
+# solve the sudoku recursively
 def solveSudoku (t, i, j)
 	if (i > 8)
 		return true
 	end
-	p = i
-	q = j + 1
+	p = i # next row number
+	q = j + 1 # next column number
 	if (q > 8)
 		q = 0
 		p += 1
@@ -201,20 +231,23 @@ end
 table = Array.new(9){Array.new(9)}
 
 # open the file and read in all the numbers or empty cells
-readFile(table)
-puts
-
-# print the input sudoku
-puts "Your input:\n\n"
-printTable(table)
-puts
-# solve sudoku
-if (solveSudoku(table, 0, 0)) 
-	puts "Solution:\n\n"
-	printTable(table)
+if !readFile(table)
+	puts "The input format is not valid."
 	puts
 else
-	puts "There is no solution for this Sudoku.\n\n"
+	puts
+	# print the input sudoku
+	puts "Your input:\n\n"
+	printTable(table)
+	puts
+	# solve sudoku
+	if (solveSudoku(table, 0, 0)) 
+		puts "Solution:\n\n"
+		printTable(table)
+		puts
+	else
+		puts "There is no solution for this Sudoku.\n\n"
+	end
 end
 
 
