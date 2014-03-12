@@ -1,34 +1,40 @@
+# read the input file
 def readFile (fileName, t)
 	file = File.new(fileName, "r")
-
 	i = 0
 	j = 0
 	rowCount = 1
 	columnCount = 0
 	while (c = file.getc)
+		# trace what column and row the input is at
 		columnCount += 1
 		if (columnCount > 12)
 			columnCount = 1
 			rowCount += 1
 		end
+		# should not have extra non-space character after 11 rows and 11 columns
 		if (((rowCount == 11) && (columnCount == 12)) || (rowCount > 11))
 			if !(c =~ /\s/)
 				return false
 			end
 			next
 		end
+		# the end of every row should be a newline
 		if (columnCount == 12)
 			if (c != "\n")
 				return false
 			end
+		# should only have '-' in row 4 and 8
 		elsif ((rowCount == 4) || (rowCount == 8))
 			if (c != '-')
 				return false
 			end
+		# should only have '|' in column 4 and 8
 		elsif ((columnCount == 4) || (columnCount == 8))
 			if (c != '|')
 				return false
 			end
+		# everything else should be either digit or .
 		else
 			if (c =~ /[[:digit:]\.]/)
 				if (c != '.')
@@ -48,6 +54,7 @@ def readFile (fileName, t)
 	true
 end
 
+# output the sudoku
 def printTable (t)
 	rowCount = 0
 	columnCount = 0
